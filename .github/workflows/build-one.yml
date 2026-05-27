@@ -1,0 +1,66 @@
+name: Build One
+
+on:
+  workflow_dispatch:
+    inputs:
+      board:
+        description: 'board'
+        required: true
+        default: 'bread-compact-wifi-lcd'
+        type: choice
+        options:
+          - bread-compact-wifi-lcd
+      name:
+        description: 'name'
+        required: true
+        default: 'bread-compact-wifi-lcd-emote'
+        type: choice
+        options:
+          - bread-compact-wifi-lcd
+          - bread-compact-wifi-lcd-wechat
+          - bread-compact-wifi-lcd-emote
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ inputs.name }}
+    runs-on: ubuntu-latest
+    container:
+      image: espressif/idf:release-v6.1
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build and package variant
+        shell: bash
+        env:
+          BOARD: ${{ inputs.board }}
+          VARIANT: ${{ inputs.name }}
+        run: |
+          source "$IDF_PATH/export.sh"
+          idf.py --version
+          python scripts/build.py "$BOARD" --name "$VARIANT" --zip
+
+      - name: Get version and tag
+        shell: bash
+        run: |
+          echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+          echo "TAG_DATE=$(date +"%Y.%m.%d-%H.%M")" >> $GITHUB_ENV
+          VER=$(grep -oP 'set\(PROJECT_VER\s+"\K[^"]+' CMakeLists.txt)
+          echo "VER=$VER" >> $GITHUB_ENV
+
+      - name: Publish release
+        uses: ncipollo/release-action@v1.20.0
+        with:
+          name: R${{ env.DATE }}
+          commit: ${{ github.sha }}
+          tag: R${{ env.VER }}_${{ env.TAG_DATE }}
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: releases/*
+          body: |
+            ### 🧊 固件版本
+            - v${{ env.VER }}
+            - R${{ env.DATE }}
+            - ${{ github.sha }}

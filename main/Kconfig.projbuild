@@ -843,6 +843,8 @@ choice DISPLAY_LCD_TYPE
         bool "ST7789 240*280"
     config LCD_ST7789_240X240
         bool "ST7789 240*240"
+    config LCD_ST7789_240X240_MIRROR
+        bool "ST7789 240*240, MIRROR"
     config LCD_ST7789_240X240_7PIN
         bool "ST7789 240*240, 7PIN"
     config LCD_ST7789_240X135
@@ -964,8 +966,18 @@ choice DISPLAY_STYLE
         depends on BOARD_TYPE_ESP32_S3_BOX || BOARD_TYPE_ESP32_S3_BOX_3 \
             || BOARD_TYPE_ESP_VOCAT || BOARD_TYPE_CYBERAI_VOCAT_V2_0 || BOARD_TYPE_CYBERAI_VOCAT_V2_1 \
             || BOARD_TYPE_LICHUANG_DEV_S3 || BOARD_TYPE_RYMCU_BIGSMART \
-            || BOARD_TYPE_ESP_SENSAIRSHUTTLE || BOARD_TYPE_STACKCHAN
+            || BOARD_TYPE_ESP_SENSAIRSHUTTLE || BOARD_TYPE_STACKCHAN \
+            || BOARD_TYPE_BREAD_COMPACT_WIFI_LCD
 endchoice
+
+config EMOTE_MESSAGE_NOTO_FONT
+    bool "Use Noto Sans font for emote messages"
+    depends on USE_EMOTE_MESSAGE_STYLE
+    default n
+    help
+        Use Noto Sans font from xiaozhi-fonts instead of the default Puhui font
+        for emote message text rendering. Copies the font file and updates
+        the emote config.json automatically.
 
 config JC4827W543_EXTERNAL_AMP
     bool "JC4827W543: external I2S amplifier instead of the on-board NS4168"
