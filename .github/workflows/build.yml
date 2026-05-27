@@ -53,7 +53,7 @@ jobs:
         with:
           name: R${{ env.DATE }}
           commit: ${{ github.sha }}
-          tag: v${{env.VER}}_${{ env.TAG_DATE }}
+          tag: R${{env.VER}}_${{ env.TAG_DATE }}
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: releases/*
