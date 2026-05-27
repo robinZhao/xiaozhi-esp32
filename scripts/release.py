@@ -39,8 +39,34 @@ def get_project_version() -> Optional[str]:
     return None
 
 
+def _get_python() -> str:
+    """Resolve Python from ESP-IDF environment, avoiding Windows Apps stub."""
+    idf_python_env = os.environ.get("IDF_PYTHON_ENV_PATH")
+    if idf_python_env:
+        env_python = os.path.join(idf_python_env, "Scripts", "python.exe")
+        if os.path.exists(env_python):
+            return env_python
+    return sys.executable
+
+
+_PYTHON = _get_python()
+
+
+def _get_idf_py() -> str:
+    """Resolve idf.py from IDF_PATH. The real idf.py lives in $IDF_PATH/tools/."""
+    idf_path = os.environ.get("IDF_PATH")
+    if idf_path:
+        idf_py = os.path.join(idf_path, "tools", "idf.py")
+        if os.path.exists(idf_py):
+            return idf_py
+    return "idf.py"
+
+
+_IDF_PY = _get_idf_py()
+
+
 def merge_bin() -> None:
-    if os.system("idf.py merge-bin") != 0:
+    if os.system(f"{_PYTHON} {_IDF_PY} merge-bin") != 0:
         print("merge-bin failed", file=sys.stderr)
         sys.exit(1)
 
@@ -371,7 +397,7 @@ def release(board_type: str, config_filename: str = "config.json", *, filter_nam
         os.environ.pop("IDF_TARGET", None)
 
         # Call set-target
-        if os.system(f"idf.py set-target {target}") != 0:
+        if os.system(f"{_PYTHON} {_IDF_PY} set-target {target}") != 0:
             print("set-target failed", file=sys.stderr)
             sys.exit(1)
 
@@ -382,7 +408,7 @@ def release(board_type: str, config_filename: str = "config.json", *, filter_nam
             for append in sdkconfig_append:
                 f.write(f"{append}\n")
         # Build with macro BOARD_NAME defined to name
-        if os.system(f"idf.py -DBOARD_NAME={name} -DBOARD_TYPE={board_type} build") != 0:
+        if os.system(f"{_PYTHON} {_IDF_PY} -DBOARD_NAME={name} -DBOARD_TYPE={board_type} build") != 0:
             print("build failed")
             sys.exit(1)
 
