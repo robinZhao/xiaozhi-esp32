@@ -1,5 +1,7 @@
 #include "wifi_board.h"
 #include "codecs/no_audio_codec.h"
+#include "display/display.h"
+#include "display/emote_display.h"
 #include "display/lcd_display.h"
 #include "system_reset.h"
 #include "application.h"
@@ -63,7 +65,7 @@ class CompactWifiBoardLCD : public WifiBoard {
 private:
  
     Button boot_button_;
-    LcdDisplay* display_;
+    Display* display_;
 
     void InitializeSpi() {
         spi_bus_config_t buscfg = {};
@@ -118,8 +120,17 @@ private:
 #ifdef  LCD_TYPE_GC9A01_SERIAL
         panel_config.vendor_config = &gc9107_vendor_config;
 #endif
+#if CONFIG_USE_EMOTE_MESSAGE_STYLE
+        esp_lcd_panel_disp_on_off(panel, true);  // Turn on display for EmoteDisplay
+        // Set display offset for panels that need it (e.g., 240x240 with offset)
+        if (DISPLAY_OFFSET_X != 0 || DISPLAY_OFFSET_Y != 0) {
+            esp_lcd_panel_set_gap(panel, DISPLAY_OFFSET_X, DISPLAY_OFFSET_Y);
+        }
+        display_ = new emote::EmoteDisplay(panel, panel_io, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+#else
         display_ = new SpiLcdDisplay(panel_io, panel,
                                     DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_OFFSET_X, DISPLAY_OFFSET_Y, DISPLAY_MIRROR_X, DISPLAY_MIRROR_Y, DISPLAY_SWAP_XY);
+#endif
     }
 
     void InitializeButtons() {
