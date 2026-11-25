@@ -32,16 +32,10 @@
                 "CONFIG_LANGUAGE_ZH_CN=y",              
                 
                 "CONFIG_USE_AFE_WAKE_WORD=y",
+                "CONFIG_SR_WN_WN9_NIHAOXIAOZHI_TTS=y",
                 "CONFIG_SR_WN_WN9L_NIHAOXIAOZHI_TTS3=y",
                 "CONFIG_SR_MN_CN_MULTINET7_QUANT=y",
-                "CONFIG_SR_MN_EN_MULTINET7_QUANT=y",
-
-                "CONFIG_WIFI_RMT_11KV_SUPPORT=y",
-                "CONFIG_WIFI_RMT_RRM_SUPPORT=y",
-                "CONFIG_WIFI_RMT_WNM_SUPPORT=y",
-                "CONFIG_WIFI_RMT_ENABLE_ROAMING_APP=y",
-                "CONFIG_WIFI_RMT_11R_SUPPORT=y",
-                "CONFIG_ESP_WIFI_FTM_ENABLE=y"
+                "CONFIG_SR_MN_EN_MULTINET7_QUANT=y"
             ]
         }
     ]
