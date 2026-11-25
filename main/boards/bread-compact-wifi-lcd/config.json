@@ -28,8 +28,7 @@
                 "CONFIG_MMAP_FILE_NAME_LENGTH=32",
 
                 "CONFIG_WAKE_WORD_DETECTION_IN_LISTENING=y",
-                "CONFIG_SEND_WAKE_WORD_DATA=y",
-                "CONFIG_LANGUAGE_ZH_CN=y",              
+                "CONFIG_SEND_WAKE_WORD_DATA=y",           
                 
                 "CONFIG_USE_AFE_WAKE_WORD=y",
                 "CONFIG_SR_WN_WN9_NIHAOXIAOZHI_TTS=y",
