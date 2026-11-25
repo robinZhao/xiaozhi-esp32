@@ -1,6 +1,9 @@
 name: Build One
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       board:
@@ -25,7 +28,7 @@ permissions:
 
 jobs:
   build:
-    name: Build ${{ inputs.name }}
+    name: Build ${{ inputs.name || 'bread-compact-wifi-lcd-emote' }}
     runs-on: ubuntu-latest
     container:
       image: espressif/idf:release-v6.1
@@ -35,12 +38,12 @@ jobs:
       - name: Build and package variant
         shell: bash
         env:
-          BOARD: ${{ inputs.board }}
-          VARIANT: ${{ inputs.name }}
+          BOARD: ${{ inputs.board || 'bread-compact-wifi-lcd' }}
+          VARIANT: ${{ inputs.name || 'bread-compact-wifi-lcd-emote' }}
         run: |
           source "$IDF_PATH/export.sh"
           idf.py --version
-          python scripts/build.py "$BOARD" --name "$VARIANT" --zip
+          python scripts/build.py "$BOARD" --name "$VARIANT" --language zh-CN --zip
 
       - name: Get version and tag
         shell: bash
