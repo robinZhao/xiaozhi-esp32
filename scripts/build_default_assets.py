@@ -87,7 +87,12 @@ def pack_models(model_path, out_file="srmodels.bin"):
     file_num = 0
     model_num = 0
     for root, dirs, _ in os.walk(model_path):
-        for model_name in dirs:
+        # os.walk enumeration order varies with the host filesystem, but the
+        # packed order decides which model the AFE loads as primary. The
+        # shared MFCC queue is sized from the primary model, and esp-sr
+        # asserts (model_detect_mfcc) when a wn9l model runs as secondary,
+        # so pack larger wn9l models first and keep the order deterministic.
+        for model_name in sorted(dirs, key=lambda name: (not name.startswith("wn9l"), name)):
             models[model_name] = {}
             model_dir = os.path.join(root, model_name)
             model_num += 1
