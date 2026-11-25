@@ -43,7 +43,7 @@ jobs:
         run: |
           source "$IDF_PATH/export.sh"
           idf.py --version
-          python scripts/build.py "$BOARD" --name "$VARIANT" --language zh-CN --wake-word wn9l_nihaoxiaozhi_tts3 --zip
+          python scripts/build.py "$BOARD" --name "$VARIANT" --language zh-CN --zip
 
       - name: Get version and tag
         shell: bash
