@@ -1,5 +1,6 @@
 #include "afe_audio_engine.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cstring>
 #include <string_view>
@@ -151,6 +152,12 @@ bool AfeAudioEngine::Initialize(AudioCodec* codec, int frame_duration_ms,
                 wakenet_models.push_back(name);
             }
         }
+        // The AFE sizes its shared MFCC feature queue from the primary model.
+        // esp-sr asserts (model_detect_mfcc: cq->n == layers[0]->n) when the
+        // larger wn9l model runs as the secondary one, so keep wn9l first.
+        std::stable_partition(wakenet_models.begin(), wakenet_models.end(), [](const char* name) {
+            return strncmp(name, "wn9l", 4) == 0;
+        });
         if (!wakenet_models.empty()) {
             afe_config->wakenet_model_name = wakenet_models[0];
         }
