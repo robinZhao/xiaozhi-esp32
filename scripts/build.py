@@ -84,7 +84,7 @@ def merge_bin(preview: bool = False) -> None:
 
 
 def zip_bin(name: str, version: str) -> None:
-    """Zip build/merged-binary.bin to releases/v{version}_{name}.zip"""
+    """Zip build/merged-binary.bin and sdkconfig to releases/v{version}_{name}.zip"""
     out_dir = Path("releases")
     out_dir.mkdir(exist_ok=True)
     output_path = out_dir / f"v{version}_{name}.zip"
@@ -94,6 +94,8 @@ def zip_bin(name: str, version: str) -> None:
 
     with zipfile.ZipFile(output_path, "w", compression=zipfile.ZIP_DEFLATED) as zipf:
         zipf.write("build/merged-binary.bin", arcname="merged-binary.bin")
+        if Path("sdkconfig").exists():
+            zipf.write("sdkconfig", arcname="sdkconfig")
     print(f"zip bin to {output_path} done")
 
 
